@@ -9,3 +9,13 @@ __pycache__/
 .venv/
 venv/
 env/
+*.xlsx
+*.docx
+
+# 로컬 전용 Selenium 크롤러 (원격 저장소에 포함하지 않음)
+yigam_env.py
+yigam_1on1.py
+yigam_comment.py
+yigam_etc.py
+yigam_product.py
+yigam_learning.py
