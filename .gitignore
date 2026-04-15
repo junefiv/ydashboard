@@ -1,0 +1,11 @@
+.env
+# MS Office lock / temp files
+~$*
+*.tmp
+*.csv
+__pycache__/
+*.py[cod]
+*.log
+.venv/
+venv/
+env/
