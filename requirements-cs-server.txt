@@ -1,0 +1,2 @@
+# serve_cs_dashboard.py + gemini_config.py 전용 (Render 등 경량 배포용)
+python-dotenv>=1.0.0

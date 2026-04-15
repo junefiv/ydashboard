@@ -18,6 +18,11 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Marked (탭 요약 레포트 모달 마크다운 렌더) -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!--
+      GitHub Pages 등 정적 호스팅에서 Gemini 요약을 쓰려면, 별도에 띄운 serve_cs_dashboard.py(동일 API) URL을 지정하세요.
+      예: <script>window.CS_DASHBOARD_API_BASE = "https://내-백엔드.up.railway.app";</script>
+      API 키는 HTML에 넣지 마세요. 백엔드 서버 환경 변수(GOOGLE_GENAI_API_KEY)에만 두세요.
+    -->
     
     <style>
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
@@ -488,12 +493,20 @@
 
         /**
          * Gemini 백엔드 API 전체 URL.
-         * `/api/...` 는 호스트 루트(예: github.io/api)로 가서 GitHub Pages 프로젝트 경로(…/repo/)와 어긋나 405·404가 날 수 있음.
-         * 현재 문서 URL 기준으로 `api/이름` 을 붙여 serve_cs_dashboard.py 와 동일 호스트·경로에 맞춤.
+         * - 기본: 현재 문서와 같은 호스트의 `api/이름` (로컬에서 serve_cs_dashboard.py 와 함께 쓸 때).
+         * - `window.CS_DASHBOARD_API_BASE` 가 있으면: 그 URL을 베이스로 `api/이름` (GitHub Pages → Railway 등 원격 백엔드).
+         * API 키는 여기 두지 말 것(반드시 백엔드 환경 변수).
          */
         function geminiApiUrl(name) {
             const n = String(name || '').replace(/^\/+/, '');
-            return new URL('api/' + n, window.location.href).href;
+            const rel = 'api/' + n;
+            const raw =
+                typeof window.CS_DASHBOARD_API_BASE === 'string' ? window.CS_DASHBOARD_API_BASE.trim() : '';
+            if (raw) {
+                const base = raw.endsWith('/') ? raw : raw + '/';
+                return new URL(rel, base).href;
+            }
+            return new URL(rel, window.location.href).href;
         }
 
         const SOURCE_ORDER = ['o11', 'comment', 'etc', 'learning', 'product'];

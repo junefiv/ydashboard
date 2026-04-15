@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-cs-dashboard.html 용 로컬 서버.
+cs-dashboard.html 용 로컬·배포 공용 HTTP 서버.
 - 정적 파일 제공
 - POST /api/gemini-report : 집계·샘플 → Gemini(JSON) → 서버에서 고정 HTML 템플릿으로 조립
 - POST /api/gemini-modal-summary : 상세 모달 문의 목록 → Gemini(Markdown 텍스트) 요약
+- GitHub Pages 등 다른 오리진에서 호출 시: 환경 변수 CS_DASHBOARD_CORS_ORIGIN, 프런트 window.CS_DASHBOARD_API_BASE
 """
 from __future__ import annotations
 
@@ -22,6 +23,11 @@ if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
 from gemini_config import DEFAULT_GENAI_MODEL_ID, get_google_genai_api_key
+
+# GitHub Pages 등 다른 오리진에서 fetch 시 브라우저가 CORS를 요구함. 기본 `*`, 운영 시 특정 오리진 권장.
+def _cors_allow_origin() -> str:
+    return (os.environ.get("CS_DASHBOARD_CORS_ORIGIN") or "*").strip() or "*"
+
 
 GEMINI_URL_TMPL = (
     "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}"
@@ -254,6 +260,17 @@ class CsDashboardHandler(SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=ROOT, **kwargs)
 
+    def end_headers(self):
+        try:
+            parsed = self.path.split("?", 1)[0]
+        except Exception:
+            parsed = ""
+        if parsed.startswith("/api/"):
+            self.send_header("Access-Control-Allow-Origin", _cors_allow_origin())
+            self.send_header("Access-Control-Allow-Headers", "Content-Type")
+            self.send_header("Access-Control-Allow-Methods", "POST, OPTIONS")
+        super().end_headers()
+
     def log_message(self, fmt, *args):
         sys.stderr.write("%s - - [%s] %s\n" % (self.address_string(), self.log_date_time_string(), fmt % args))
 
@@ -417,6 +434,8 @@ def main():
     httpd = HTTPServer(addr, CsDashboardHandler)
     print(f"CS 대시보드 서버: http://localhost:{port}/cs-dashboard.html")
     print("  - 정적 파일 + POST /api/gemini-report, POST /api/gemini-modal-summary")
+    co = _cors_allow_origin()
+    print(f"  - CORS( /api/* ): Access-Control-Allow-Origin={co!r} (환경변수 CS_DASHBOARD_CORS_ORIGIN)")
     httpd.serve_forever()
 
 
