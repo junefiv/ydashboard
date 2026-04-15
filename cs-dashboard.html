@@ -1791,6 +1791,72 @@
             });
         }
 
+        /** 유형 비중 도넛: 조각 위 건수 · 작은 조각은 연장선 + 바깥 숫자 (범례에도 건수 표기) */
+        if (typeof Chart !== 'undefined' && !window.__csDashDoughnutCounts) {
+            window.__csDashDoughnutCounts = true;
+            Chart.register({
+                id: 'csDashDoughnutCounts',
+                afterDraw(chart) {
+                    if (chart.canvas.id !== 'chartDoughnut' || chart.config.type !== 'doughnut') return;
+                    const meta = chart.getDatasetMeta(0);
+                    if (!meta || meta.hidden || !meta.data || !meta.data.length) return;
+                    const values = chart.data.datasets[0].data;
+                    const total = values.reduce((a, b) => a + (Number(b) || 0), 0) || 1;
+                    const ctx = chart.ctx;
+                    ctx.save();
+                    ctx.font = '600 11px Pretendard, system-ui, sans-serif';
+                    ctx.textBaseline = 'middle';
+                    ctx.textAlign = 'center';
+                    meta.data.forEach((arc, i) => {
+                        const n = Number(values[i]);
+                        if (!arc || n == null || n <= 0 || Number.isNaN(n)) return;
+                        const { x, y, startAngle, endAngle } = arc;
+                        let innerR = arc.innerRadius;
+                        let outerR = arc.outerRadius;
+                        if ((innerR == null || outerR == null) && typeof arc.getProps === 'function') {
+                            const p = arc.getProps(['innerRadius', 'outerRadius'], true);
+                            innerR = p.innerRadius;
+                            outerR = p.outerRadius;
+                        }
+                        innerR = typeof innerR === 'number' ? innerR : 0;
+                        outerR = typeof outerR === 'number' ? outerR : 0;
+                        if (x == null || y == null || outerR <= 0 || startAngle == null || endAngle == null) return;
+                        const span = Math.abs(endAngle - startAngle);
+                        const mid = (startAngle + endAngle) / 2;
+                        const cos = Math.cos(mid);
+                        const sin = Math.sin(mid);
+                        const t = n.toLocaleString();
+                        const small = span < 0.13 || n / total < 0.038;
+                        if (!small) {
+                            const rr = (innerR + outerR) / 2;
+                            const lx = x + cos * rr;
+                            const ly = y + sin * rr;
+                            ctx.strokeStyle = 'rgba(15,23,42,0.4)';
+                            ctx.lineWidth = 3;
+                            ctx.strokeText(t, lx, ly);
+                            ctx.fillStyle = '#fff';
+                            ctx.fillText(t, lx, ly);
+                        } else {
+                            const bump = 20;
+                            const lx = x + cos * (outerR + bump);
+                            const ly = y + sin * (outerR + bump);
+                            const rimX = x + cos * outerR;
+                            const rimY = y + sin * outerR;
+                            ctx.beginPath();
+                            ctx.strokeStyle = '#94a3b8';
+                            ctx.lineWidth = 1;
+                            ctx.moveTo(rimX, rimY);
+                            ctx.lineTo(lx, ly);
+                            ctx.stroke();
+                            ctx.fillStyle = '#475569';
+                            ctx.fillText(t, lx, ly);
+                        }
+                    });
+                    ctx.restore();
+                }
+            });
+        }
+
         function getChart(id, config) {
             const el = document.getElementById(id);
             if (!el) return;
@@ -2233,7 +2299,35 @@
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { position: 'right', labels: { boxWidth: 10 } } },
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                boxWidth: 10,
+                                generateLabels(chart) {
+                                    const d0 = chart.data.datasets[0];
+                                    const labels = chart.data.labels || [];
+                                    return labels.map((label, i) => {
+                                        const raw = d0.data[i];
+                                        const n = Number(raw);
+                                        const cnt = Number.isFinite(n) ? n.toLocaleString() : String(raw);
+                                        const vis = typeof chart.getDataVisibility === 'function'
+                                            ? chart.getDataVisibility(i)
+                                            : true;
+                                        return {
+                                            text: `${label} (${cnt}건)`,
+                                            fillStyle: Array.isArray(d0.backgroundColor) ? d0.backgroundColor[i] : d0.backgroundColor,
+                                            strokeStyle: Array.isArray(d0.borderColor) ? d0.borderColor[i] : (d0.borderColor || '#fff'),
+                                            lineWidth: typeof d0.borderWidth === 'number' ? d0.borderWidth : (Array.isArray(d0.borderWidth) ? d0.borderWidth[i] : 0),
+                                            hidden: !vis,
+                                            datasetIndex: 0,
+                                            index: i
+                                        };
+                                    });
+                                }
+                            }
+                        }
+                    },
                     cutout: '68%',
                     onClick: (evt, els, ch) => handleDoughnutBrushClick(evt, els, ch.data.labels)
                 }
