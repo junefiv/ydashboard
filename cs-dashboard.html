@@ -16,13 +16,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- GitHub Pages(호스트가 *.github.io)에서만 Render 백엔드. 로컬은 같은 호스트의 serve_cs_dashboard.py -->
+    <script>
+        if (location.hostname.endsWith('github.io')) {
+            window.CS_DASHBOARD_API_BASE = 'https://ydashboard-api.onrender.com';
+        }
+    </script>
     <!-- Marked (탭 요약 레포트 모달 마크다운 렌더) -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <!--
-      GitHub Pages 등 정적 호스팅에서 Gemini 요약을 쓰려면, 별도에 띄운 serve_cs_dashboard.py(동일 API) URL을 지정하세요.
-      예: <script>window.CS_DASHBOARD_API_BASE = "https://내-백엔드.up.railway.app";</script>
-      API 키는 HTML에 넣지 마세요. 백엔드 서버 환경 변수(GOOGLE_GENAI_API_KEY)에만 두세요.
-    -->
     
     <style>
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
