@@ -269,6 +269,16 @@ class CsDashboardHandler(SimpleHTTPRequestHandler):
         except Exception as e:
             return None, f"JSON 파싱 실패: {e}"
 
+    def do_OPTIONS(self):
+        parsed = self.path.split("?", 1)[0]
+        if parsed in ("/api/gemini-modal-summary", "/api/gemini-report"):
+            self.send_response(HTTPStatus.NO_CONTENT)
+            self.send_header("Allow", "POST, OPTIONS")
+            self.send_header("Content-Length", "0")
+            self.end_headers()
+            return
+        self.send_error(HTTPStatus.NOT_FOUND)
+
     def do_POST(self):
         parsed = self.path.split("?", 1)[0]
         if parsed == "/api/gemini-modal-summary":

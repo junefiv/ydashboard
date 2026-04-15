@@ -486,6 +486,16 @@
 
         const REFRESH_INTERVAL_MS = 10000; // 10초마다 자동 갱신
 
+        /**
+         * Gemini 백엔드 API 전체 URL.
+         * `/api/...` 는 호스트 루트(예: github.io/api)로 가서 GitHub Pages 프로젝트 경로(…/repo/)와 어긋나 405·404가 날 수 있음.
+         * 현재 문서 URL 기준으로 `api/이름` 을 붙여 serve_cs_dashboard.py 와 동일 호스트·경로에 맞춤.
+         */
+        function geminiApiUrl(name) {
+            const n = String(name || '').replace(/^\/+/, '');
+            return new URL('api/' + n, window.location.href).href;
+        }
+
         const SOURCE_ORDER = ['o11', 'comment', 'etc', 'learning', 'product'];
         const SOURCE_LABEL = { o11: '1on1', comment: 'comment', etc: 'etc', learning: 'learning', product: 'product' };
         /** 토탈 레포트·집계용 한글 소스 표기 (탭 버튼 라벨과 맞춤) */
@@ -958,7 +968,7 @@
             }));
 
             try {
-                const res = await fetch('/api/gemini-modal-summary', {
+                const res = await fetch(geminiApiUrl('gemini-modal-summary'), {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ modalTitle: title, rows: payloadRows })
@@ -1336,7 +1346,7 @@
             const rowsPayload = sorted.slice(0, 120).map(d => serializeRowForGemini(d, serOpts));
 
             try {
-                const res = await fetch('/api/gemini-report', {
+                const res = await fetch(geminiApiUrl('gemini-report'), {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
