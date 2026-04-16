@@ -113,7 +113,7 @@
                 </div>
                 <div class="flex flex-col items-center gap-0.5 flex-1 min-w-0" title="comment.csv · 한줄평">
                     <span data-src-light="comment" class="h-2 w-2 rounded-full bg-slate-600 shrink-0 transition-all"></span>
-                    <span class="text-[9px] text-slate-500 leading-none truncate w-full text-center">한줄평평</span>
+                    <span class="text-[9px] text-slate-500 leading-none truncate w-full text-center">한줄평</span>
                 </div>
                 <div class="flex flex-col items-center gap-0.5 flex-1 min-w-0" title="etc.csv · 기타 문의">
                     <span data-src-light="etc" class="h-2 w-2 rounded-full bg-slate-600 shrink-0 transition-all"></span>
@@ -221,22 +221,22 @@
                     </button>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div id="kpi-row" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div class="bg-white rounded-xl shadow-sm p-5 border border-slate-200">
                         <p class="text-sm text-slate-500 font-medium">총 건수</p>
                         <h3 class="text-3xl font-bold text-slate-800 mt-2" id="kpi-total">0</h3>
                     </div>
-                    <div class="bg-white rounded-xl shadow-sm p-5 border border-slate-200">
+                    <div id="kpi-card-avg-time" class="bg-white rounded-xl shadow-sm p-5 border border-slate-200">
                         <p class="text-sm text-slate-500 font-medium">평균 답변 소요시간</p>
                         <h3 class="text-3xl font-bold text-blue-600 mt-2" id="kpi-avg-time">—</h3>
                         <p class="text-xs text-slate-400 mt-1">답변 시각이 있는 건만</p>
                     </div>
-                    <div class="bg-white rounded-xl shadow-sm p-5 border border-slate-200">
+                    <div id="kpi-card-rate" class="bg-white rounded-xl shadow-sm p-5 border border-slate-200">
                         <p class="text-sm text-slate-500 font-medium">답변 완료율</p>
                         <h3 class="text-3xl font-bold text-green-600 mt-2" id="kpi-rate">—</h3>
                     </div>
                     <div class="bg-white rounded-xl shadow-sm p-5 border border-slate-200">
-                        <p class="text-sm text-slate-500 font-medium">최다 유형</p>
+                        <p class="text-sm text-slate-500 font-medium" id="kpi-top-type-label">최다 유형</p>
                         <h3 class="text-lg font-bold text-indigo-600 mt-2 truncate" id="kpi-top-type">—</h3>
                         <p class="text-xs text-slate-400 mt-1" id="kpi-top-type-sub"></p>
                     </div>
@@ -245,7 +245,7 @@
                 <div id="product-name-filter-panel" class="hidden bg-white rounded-xl shadow-sm p-4 border border-slate-200">
                     <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
                         <div class="flex items-center gap-2">
-                            <span class="text-sm font-bold text-slate-800">상품명 범위</span>
+                            <span id="product-name-filter-heading" class="text-sm font-bold text-slate-800">상품명 범위</span>
                             <span id="product-name-filter-hint" class="text-xs text-slate-500"></span>
                         </div>
                         <div class="flex flex-wrap gap-2">
@@ -258,8 +258,8 @@
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div class="bg-white rounded-xl shadow-sm p-5 border border-slate-200 lg:col-span-1 relative group order-2 lg:order-1">
-                        <h3 class="text-base font-bold text-slate-800 mb-1">유형 비중</h3>
-                        <p class="text-xs text-slate-400 mb-3">기간·상품 범위 내 유형 비중입니다.</p>
+                        <h3 id="chart-doughnut-title" class="text-base font-bold text-slate-800 mb-1">유형 비중</h3>
+                        <p id="chart-doughnut-desc" class="text-xs text-slate-400 mb-3">기간·상품 범위 내 유형 비중입니다.</p>
                         <div class="h-72 relative">
                             <canvas id="chartDoughnut"></canvas>
                             <div id="chart-slot-msg-doughnut" class="hidden absolute inset-0 flex items-center justify-center text-center text-slate-500 text-sm px-4 border border-dashed border-slate-200 rounded-lg bg-slate-50/95"></div>
@@ -275,6 +275,41 @@
                             <canvas id="chartTrend"></canvas>
                             <div id="chart-slot-msg-trend" class="hidden absolute inset-0 flex items-center justify-center text-center text-slate-500 text-sm px-4 border border-dashed border-slate-200 rounded-lg bg-slate-50/95"></div>
                         </div>
+                    </div>
+                </div>
+
+                <div id="comment-emotion-panels" class="hidden grid grid-cols-1 xl:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-xl shadow-sm p-5 border border-slate-200 lg:col-span-1 relative group">
+                        <h3 class="text-base font-bold text-slate-800 mb-1">감정 카테고리 비중</h3>
+                        <p class="text-xs text-slate-400 mb-3">선택 기간·모의고사 범위를 따르며, 위쪽 「모의고사 비중」「일별 추이」에서 조각·막대를 고르면 그에 해당하는 건만 집계됩니다. 감정 조각을 클릭하면 감정만 강조되고, 오른쪽 아래에서 상세 목록을 볼 수 있습니다.</p>
+                        <div class="h-72 relative">
+                            <canvas id="chartCommentEmotionDoughnut"></canvas>
+                            <div id="chart-slot-msg-comment-emotion-doughnut" class="hidden absolute inset-0 flex items-center justify-center text-center text-slate-500 text-sm px-4 border border-dashed border-slate-200 rounded-lg bg-slate-50/95"></div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm p-5 border border-slate-200 lg:col-span-1 relative group">
+                        <div class="flex justify-between items-start gap-2 mb-1">
+                            <h3 class="text-base font-bold text-slate-800">월별 감정 추이</h3>
+                            <button type="button" onclick="state.charts['chartCommentEmotionLine']&&state.charts['chartCommentEmotionLine'].resetZoom()" class="hidden group-hover:block text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 px-2 py-1 rounded transition shrink-0">줌 초기화</button>
+                        </div>
+                        <p class="text-xs text-slate-400 mb-3">가로축: 등록월(YYYY-MM). 위쪽 상위 차트에서 모의고사·일자를 좁히면 이 그래프도 같은 부분집합만 반영합니다. 점을 클릭하면 해당 월·감정만 추가로 필터됩니다.</p>
+                        <div class="h-72 relative">
+                            <canvas id="chartCommentEmotionLine"></canvas>
+                            <div id="chart-slot-msg-comment-emotion-line" class="hidden absolute inset-0 flex items-center justify-center text-center text-slate-500 text-sm px-4 border border-dashed border-slate-200 rounded-lg bg-slate-50/95"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="comment-mock-month-grids" class="hidden grid grid-cols-1 xl:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-xl shadow-sm p-5 border border-slate-200">
+                        <h3 class="text-base font-bold text-slate-800 mb-1">모의고사(학원)</h3>
+                        <p class="text-xs text-slate-400 mb-3">모의고사별 · 등록월(YYYY-MM)별 건수 (좌측 기간 필터 반영)</p>
+                        <div id="comment-grid-academy-mount" class="max-h-[min(70vh,520px)] overflow-auto border border-slate-200 rounded-lg bg-slate-50/40"></div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm p-5 border border-slate-200">
+                        <h3 class="text-base font-bold text-slate-800 mb-1">모의고사(온라인)</h3>
+                        <p class="text-xs text-slate-400 mb-3">모의고사별 · 등록월(YYYY-MM)별 건수 (좌측 기간 필터 반영)</p>
+                        <div id="comment-grid-online-mount" class="max-h-[min(70vh,520px)] overflow-auto border border-slate-200 rounded-lg bg-slate-50/40"></div>
                     </div>
                 </div>
 
@@ -383,6 +418,10 @@
     <button type="button" id="btn-filtered-detail-float" onclick="openChartFilteredDetailModal()" class="hidden fixed bottom-6 right-6 z-[38] shadow-xl rounded-full px-5 py-3 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold flex items-center gap-2 border border-indigo-500/30">
         <i data-lucide="layout-list" class="w-4 h-4"></i>
         <span>내역 보러가기 (<span id="filtered-detail-count">0</span>건)</span>
+    </button>
+    <button type="button" id="btn-comment-emotion-float" onclick="openCommentEmotionDetailModal()" class="hidden fixed bottom-24 right-6 z-[38] shadow-xl rounded-full px-5 py-3 bg-violet-600 hover:bg-violet-500 text-white text-sm font-semibold flex items-center gap-2 border border-violet-500/30">
+        <i data-lucide="smile" class="w-4 h-4"></i>
+        <span>감정별 내역 (<span id="comment-emotion-detail-count">0</span>건)</span>
     </button>
 
     <!-- 상품명 다중 선택 (학습질문·상품문의) -->
@@ -525,21 +564,23 @@
             currentModalTitle: "",
             dataSource: null,
             lastFetchSnapshot: null,
-            /** learning·product 탭: null=전체 on, []=전체 off(기본), [이름…]=해당 상품명만 */
-            productNameSelection: { learning: [], product: [] },
+            /** learning·product·comment: null=전체 on, []=전체 off(기본), [이름…]=해당 라벨만 (한줄평=모의고사) */
+            productNameSelection: { learning: [], product: [], comment: [] },
             /** 학습질문: 페이지·문항 버블용 교재(구분/depth 경로) 단일 선택 */
             learningHeatmapProduct: null,
             /** 학습 매트릭스 셀 클릭용 "페이지|문항" → 행 배열 (모달 열 때만 채움) */
             learningPQCellRows: null,
             /** 도넛·일별 추이·구간 막대 클릭 필터 (Set 또는 null=미적용) */
             chartBrush: { categories: null, trendCells: null, barBuckets: null },
+            /** 한줄평 감정 차트: emotions=감정 라벨, months=YYYY-MM (도넛은 months 미사용) */
+            commentEmotionBrush: { emotions: null, months: null },
             /** renderSourceDashboard에서 갱신 — applyChartBrushToRows용 */
             _chartCtx: null
         };
         let refetchIntervalId = null;
 
         function applyProductNameTabFilter(rows, tabKey) {
-            if (tabKey !== 'learning' && tabKey !== 'product') return rows;
+            if (tabKey !== 'learning' && tabKey !== 'product' && tabKey !== 'comment') return rows;
             const sel = state.productNameSelection[tabKey];
             if (sel == null) return rows;
             if (sel.length === 0) return [];
@@ -557,9 +598,14 @@
             return `rgba(${r},${g},${b},${alpha})`;
         }
 
+        function resetCommentEmotionBrush() {
+            state.commentEmotionBrush = { emotions: null, months: null };
+        }
+
         function resetChartBrush() {
             state.chartBrush = { categories: null, trendCells: null, barBuckets: null };
             state._chartCtx = null;
+            resetCommentEmotionBrush();
         }
 
         function isCtrlMeta(evt) {
@@ -640,6 +686,13 @@
             return out;
         }
 
+        /** 한줄평: 위쪽 「모의고사 비중」「일별 추이」에서 선택한 필터와 동일한 행만 (감정 차트·감정 모달) */
+        function getCommentRowsWithMainChartFilter() {
+            const rows = getViewDataset();
+            if (state.currentTab !== 'comment') return rows;
+            return applyChartBrushToRows(rows);
+        }
+
         function updateFilteredDetailFloat() {
             const btn = document.getElementById('btn-filtered-detail-float');
             if (!btn) return;
@@ -673,6 +726,107 @@
             }
             const sub = parts.length ? ` (${parts.join(' · ')})` : '';
             showDetailModal(`차트 필터 문의 내역${sub}`, filtered, '');
+        }
+
+        function hasActiveCommentEmotionBrush() {
+            const b = state.commentEmotionBrush;
+            return (b.emotions && b.emotions.size > 0) || (b.months && b.months.size > 0);
+        }
+
+        function applyCommentEmotionBrushToRows(rows) {
+            const b = state.commentEmotionBrush;
+            let out = rows;
+            if (b.emotions && b.emotions.size > 0) {
+                out = out.filter(r => r._emotionCategory != null && b.emotions.has(r._emotionCategory));
+            }
+            if (b.months && b.months.size > 0) {
+                out = out.filter(r => b.months.has(r._monthStr));
+            }
+            return out;
+        }
+
+        function updateCommentEmotionFloat() {
+            const btn = document.getElementById('btn-comment-emotion-float');
+            if (!btn) return;
+            if (state.currentTab !== 'comment') {
+                btn.classList.add('hidden');
+                return;
+            }
+            const base = getCommentRowsWithMainChartFilter();
+            if (base.length === 0) {
+                btn.classList.add('hidden');
+                return;
+            }
+            if (!hasActiveCommentEmotionBrush()) {
+                btn.classList.add('hidden');
+                return;
+            }
+            const n = applyCommentEmotionBrushToRows(base).length;
+            const nEl = document.getElementById('comment-emotion-detail-count');
+            if (nEl) nEl.textContent = n.toLocaleString();
+            btn.classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        window.openCommentEmotionDetailModal = function openCommentEmotionDetailModal() {
+            const base = getCommentRowsWithMainChartFilter();
+            const filtered = applyCommentEmotionBrushToRows(base);
+            const b = state.commentEmotionBrush;
+            const parts = [];
+            if (b.emotions && b.emotions.size) {
+                parts.push(`감정: ${[...b.emotions].slice(0, 12).join(', ')}${b.emotions.size > 12 ? '…' : ''}`);
+            }
+            if (b.months && b.months.size) {
+                parts.push(`월: ${[...b.months].sort().join(', ')}`);
+            }
+            const sub = parts.length ? ` (${parts.join(' · ')})` : '';
+            showDetailModal(`감정 카테고리 한줄평${sub}`, filtered, '');
+        }
+
+        function handleCommentEmotionDoughnutClick(evt, elements, labels) {
+            if (!elements || !elements.length) return;
+            const idx = elements[0].index;
+            const lab = labels[idx];
+            if (lab == null) return;
+            const ctrl = isCtrlMeta(evt);
+            let set = state.commentEmotionBrush.emotions;
+            if (ctrl) {
+                set = set ? new Set(set) : new Set();
+                if (set.has(lab)) set.delete(lab);
+                else set.add(lab);
+                state.commentEmotionBrush.emotions = set.size ? set : null;
+                state.commentEmotionBrush.months = null;
+            } else {
+                if (set && set.size === 1 && set.has(lab) && !state.commentEmotionBrush.months) {
+                    state.commentEmotionBrush.emotions = null;
+                } else {
+                    state.commentEmotionBrush.emotions = new Set([lab]);
+                    state.commentEmotionBrush.months = null;
+                }
+            }
+            renderSourceDashboard();
+        }
+
+        function handleCommentEmotionLineClick(evt, elements, chart) {
+            if (!elements || !elements.length) return;
+            const el = elements[0];
+            const mi = el.index;
+            const di = el.datasetIndex;
+            const month = chart.data.labels[mi];
+            const emotion = chart.data.datasets[di] && chart.data.datasets[di].label;
+            if (month == null || emotion == null) return;
+            const same = state.commentEmotionBrush.emotions && state.commentEmotionBrush.emotions.size === 1
+                && state.commentEmotionBrush.emotions.has(emotion)
+                && state.commentEmotionBrush.months && state.commentEmotionBrush.months.size === 1
+                && state.commentEmotionBrush.months.has(month);
+            if (same) {
+                state.commentEmotionBrush.emotions = null;
+                state.commentEmotionBrush.months = null;
+            } else {
+                state.commentEmotionBrush.emotions = new Set([emotion]);
+                state.commentEmotionBrush.months = new Set([month]);
+            }
+            renderSourceDashboard();
         }
 
         function handleDoughnutBrushClick(evt, elements, labels) {
@@ -803,11 +957,15 @@
 
         function normalizeComment(r) {
             if (!r['등록일'] || (!r['본문'] && !r['구분'])) return null;
+            const mock = String(r['모의고사'] != null ? r['모의고사'] : '').trim();
             const title = [r['모의고사'], r['선택과목']].filter(Boolean).join(' · ').slice(0, 200);
+            const emoRaw = r['감정카테고리'] != null ? stripBom(String(r['감정카테고리'])).trim() : '';
             return {
                 구분: r['구분'] || '미분류',
+                모의고사: mock,
                 제목: title || '한줄평',
                 내용: r['본문'] || '',
+                감정카테고리: emoRaw || '미분류',
                 질문등록일: stripBom(String(r['등록일'])).trim(),
                 답변: '',
                 답변등록일: '',
@@ -897,7 +1055,12 @@
                 _isWeekend: (reqDate.getDay() === 0 || reqDate.getDay() === 6),
                 _dateStr: (row['질문등록일'] || '').split(' ')[0],
                 _monthStr: (row['질문등록일'] || '').substring(0, 7),
-                _category: row['구분'] || '미분류'
+                _category: row._source === 'comment'
+                    ? (String(row['모의고사'] != null ? row['모의고사'] : '').trim() || '미분류')
+                    : (row['구분'] || '미분류'),
+                _emotionCategory: row._source === 'comment'
+                    ? (String(row['감정카테고리'] != null ? row['감정카테고리'] : '').trim() || '미분류')
+                    : null
             };
         }
 
@@ -1084,13 +1247,13 @@
             updateSidebarSourceLights();
             document.getElementById('btn-product-name-all')?.addEventListener('click', () => {
                 const k = state.currentTab;
-                if (k !== 'learning' && k !== 'product') return;
+                if (k !== 'learning' && k !== 'product' && k !== 'comment') return;
                 state.productNameSelection[k] = null;
                 renderSourceDashboard();
             });
             document.getElementById('btn-product-name-more')?.addEventListener('click', () => {
                 const k = state.currentTab;
-                if (k !== 'learning' && k !== 'product') return;
+                if (k !== 'learning' && k !== 'product' && k !== 'comment') return;
                 openProductNameModal(k);
             });
             document.getElementById('product-name-modal-backdrop')?.addEventListener('click', closeProductNameModal);
@@ -1146,7 +1309,7 @@
             const formatSampleLine = opts.formatSampleLine || ((d, i, c) =>
                 `${i + 1}. **${c(d['제목'] || '(제목 없음)')}** · \`${c(d._category)}\` · ${c(d._dateStr)}\n`);
             const emptyMsg = opts.emptyMsg != null ? opts.emptyMsg
-                : '> 선택한 기간·조건에 **표시된 데이터가 없습니다.** 기간 또는 학습/상품 탭의 상품명 선택을 확인한 뒤 다시 생성해 주세요.\n';
+                : '> 선택한 기간·조건에 **표시된 데이터가 없습니다.** 기간 또는 학습/상품 탭의 상품명·한줄평 탭의 모의고사 선택·CSV 로드를 확인한 뒤 다시 생성해 주세요.\n';
             const noRtMsg = opts.noRtMsg != null ? opts.noRtMsg
                 : '_이 소스·기간 데이터에는 답변 소요시간이 계산된 건이 없습니다._\n\n';
 
@@ -1251,14 +1414,31 @@
                 else if (sel.length === 0) pn = '상품명 미선택(OFF)';
                 else pn = `${sel.length}개 선택: ${sel.slice(0, 12).map(cell).join(', ')}${sel.length > 12 ? ' …' : ''}`;
                 md += `| 상품명 범위 | ${pn} |\n`;
+            } else if (tabKey === 'comment') {
+                const sel = state.productNameSelection.comment;
+                let pn = '—';
+                if (sel == null) pn = '모의고사 전체(ON)';
+                else if (sel.length === 0) pn = '모의고사 미선택(OFF)';
+                else pn = `${sel.length}개 선택: ${sel.slice(0, 12).map(cell).join(', ')}${sel.length > 12 ? ' …' : ''}`;
+                md += `| 모의고사 범위 | ${pn} |\n`;
             }
-            md += `| 분석 건수 | **${rows.length.toLocaleString()}건** (기간·상품 조건 적용 후 화면과 동일 데이터) |\n\n`;
+            const scopeNote = tabKey === 'comment'
+                ? '기간·모의고사 범위 조건 적용 후 화면과 동일 데이터'
+                : (tabKey === 'learning' || tabKey === 'product')
+                    ? '기간·상품명 범위 조건 적용 후 화면과 동일 데이터'
+                    : '기간 조건 적용 후 화면과 동일 데이터';
+            md += `| 분석 건수 | **${rows.length.toLocaleString()}건** (${scopeNote}) |\n\n`;
 
             return appendAggregateReportStatsSections(md, rows, cell, {});
         }
 
         function productNameMdCell(tabKey, cell) {
             const sel = state.productNameSelection[tabKey];
+            if (tabKey === 'comment') {
+                if (sel == null) return '모의고사 전체(ON)';
+                if (sel.length === 0) return '모의고사 미선택(OFF)';
+                return `${sel.length}개 모의고사: ${sel.slice(0, 8).map(cell).join(', ')}${sel.length > 8 ? ' …' : ''}`;
+            }
             if (sel == null) return '상품명 전체(ON)';
             if (sel.length === 0) return '상품명 미선택(OFF)';
             return `${sel.length}개 선택: ${sel.slice(0, 8).map(cell).join(', ')}${sel.length > 8 ? ' …' : ''}`;
@@ -1279,6 +1459,7 @@
             md += `| 대시보드 소스 | 5소스 통합 (\`o11\`, \`comment\`, \`etc\`, \`learning\`, \`product\`) |\n`;
             md += `| 학습질문 상품명 범위 | ${cell(productNameMdCell('learning', cell))} |\n`;
             md += `| 상품문의 상품명 범위 | ${cell(productNameMdCell('product', cell))} |\n`;
+            md += `| 한줄평 모의고사 범위 | ${cell(productNameMdCell('comment', cell))} |\n`;
             md += `| 소스별 건수(필터 후) | ${SOURCE_ORDER.map(k => {
                 const n = (applyProductNameTabFilter(state.filteredBySource[k] || [], k)).length;
                 return `${cell(TOTAL_SOURCE_LABEL[k] || k)} ${n.toLocaleString()}건`;
@@ -1287,7 +1468,7 @@
 
             const srcLab = d => TOTAL_SOURCE_LABEL[d._source] || d._source || '';
             return appendAggregateReportStatsSections(md, rows, cell, {
-                emptyMsg: '> 선택한 기간·조건에 **표시된 데이터가 없습니다.** 기간을 넓히거나, 학습/상품 탭의 상품명 선택·CSV 로드를 확인한 뒤 다시 생성해 주세요.\n',
+                emptyMsg: '> 선택한 기간·조건에 **표시된 데이터가 없습니다.** 기간을 넓히거나, 학습/상품 탭의 상품명·한줄평 탭의 모의고사 선택·CSV 로드를 확인한 뒤 다시 생성해 주세요.\n',
                 categoryKey: d => `[${srcLab(d)}] ${d._category || '미분류'}`,
                 formatSampleLine: (d, i, c) => {
                     const ch = c(srcLab(d));
@@ -1595,7 +1776,7 @@
                     }
                     state.enrichedBySource[k] = enrichList(parseRowsFromCSV(txt, MAPPERS[k]));
                 });
-                state.productNameSelection = { learning: [], product: [] };
+                state.productNameSelection = { learning: [], product: [], comment: [] };
                 state.learningHeatmapProduct = null;
                 state.learningPQCellRows = null;
                 resetChartBrush();
@@ -1642,6 +1823,28 @@
                 const d = String(cur.getDate()).padStart(2, '0');
                 out.push(`${y}-${m}-${d}`);
                 cur.setDate(cur.getDate() + 1);
+            }
+            return out;
+        }
+
+        /** filter-start ~ filter-end(포함)의 연·월 문자열 YYYY-MM 배열 */
+        function buildMonthsInRangeInclusive(startStr, endStr) {
+            if (!startStr || !endStr) return [];
+            const partsS = startStr.split('-').map(Number);
+            const partsE = endStr.split('-').map(Number);
+            if (partsS.length !== 3 || partsE.length !== 3) return [];
+            let y = partsS[0];
+            let mo = partsS[1];
+            const endY = partsE[0];
+            const endMo = partsE[1];
+            const out = [];
+            while (y < endY || (y === endY && mo <= endMo)) {
+                out.push(`${y}-${String(mo).padStart(2, '0')}`);
+                mo++;
+                if (mo > 12) {
+                    mo = 1;
+                    y++;
+                }
             }
             return out;
         }
@@ -1821,7 +2024,8 @@
             Chart.register({
                 id: 'csDashDoughnutCounts',
                 afterDraw(chart) {
-                    if (chart.canvas.id !== 'chartDoughnut' || chart.config.type !== 'doughnut') return;
+                    if (chart.config.type !== 'doughnut') return;
+                    if (chart.canvas.id !== 'chartDoughnut' && chart.canvas.id !== 'chartCommentEmotionDoughnut') return;
                     const meta = chart.getDatasetMeta(0);
                     if (!meta || meta.hidden || !meta.data || !meta.data.length) return;
                     const values = chart.data.datasets[0].data;
@@ -1918,10 +2122,14 @@
             const panel = document.getElementById('product-name-filter-panel');
             const chipsEl = document.getElementById('product-name-chips');
             const hintEl = document.getElementById('product-name-filter-hint');
+            const headingEl = document.getElementById('product-name-filter-heading');
             if (!panel || !chipsEl) return;
-            const show = tabKey === 'learning' || tabKey === 'product';
+            const show = tabKey === 'learning' || tabKey === 'product' || tabKey === 'comment';
             panel.classList.toggle('hidden', !show);
             if (!show) return;
+            if (headingEl) {
+                headingEl.textContent = tabKey === 'comment' ? '모의고사 범위' : '상품명 범위';
+            }
             const names = collectDistinctProductNames(tabKey);
             const sel = state.productNameSelection[tabKey];
             if (hintEl) {
@@ -1957,7 +2165,13 @@
             window._pnModalDraft = draft;
             window._pnModalAll = all;
             const title = document.getElementById('product-name-modal-title');
-            if (title) title.textContent = key === 'learning' ? '학습 Q&A · 상품명 선택' : '상품 문의 · 상품명 선택';
+            if (title) {
+                title.textContent = key === 'learning'
+                    ? '학습 Q&A · 상품명 선택'
+                    : key === 'comment'
+                        ? '한줄평 · 모의고사 선택'
+                        : '상품 문의 · 상품명 선택';
+            }
             document.getElementById('product-name-modal').classList.remove('hidden');
             const search = document.getElementById('pn-modal-search');
             if (search) search.value = '';
@@ -2016,10 +2230,112 @@
         }
 
         const MSG_CHART_NEED_PRODUCT = '분석할 상품명을 상품명 범위 섹션에서 선택해주세요';
+        const MSG_CHART_NEED_COMMENT_MOCK = '차트를 보려면 상단 「모의고사 범위」에서 하나 이상의 모의고사를 선택해 주세요.';
         const MSG_CHART_NO_DATA = '이 소스·기간에 표시할 데이터가 없습니다.';
 
+        function updateKpiRowForTab(tabKey) {
+            const kpiRow = document.getElementById('kpi-row');
+            const kpiAvg = document.getElementById('kpi-card-avg-time');
+            const kpiRate = document.getElementById('kpi-card-rate');
+            const topLabel = document.getElementById('kpi-top-type-label');
+            if (!kpiRow || !kpiAvg || !kpiRate) return;
+            const isComment = tabKey === 'comment';
+            kpiAvg.classList.toggle('hidden', isComment);
+            kpiRate.classList.toggle('hidden', isComment);
+            kpiRow.className = isComment
+                ? 'grid grid-cols-1 sm:grid-cols-2 gap-4'
+                : 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4';
+            if (topLabel) topLabel.textContent = isComment ? '최다 모의고사' : '최다 유형';
+        }
+
+        /** 한줄평: 구분(채널)으로 필터한 뒤 모의고사×등록월 격자 */
+        function renderMockExamMonthHeatmap(mountId, rows, emptyMsg) {
+            const el = document.getElementById(mountId);
+            if (!el) return;
+            if (!rows.length) {
+                el.innerHTML = `<p class="text-sm text-slate-400 py-8 text-center">${escapeHtml(emptyMsg)}</p>`;
+                return;
+            }
+            const cell = new Map();
+            const exams = new Set();
+            const months = new Set();
+            rows.forEach(d => {
+                const exam = String(d['모의고사'] != null ? d['모의고사'] : '').trim();
+                const m = d._monthStr;
+                if (!exam || !m) return;
+                exams.add(exam);
+                months.add(m);
+                const k = `${exam}\x1e${m}`;
+                cell.set(k, (cell.get(k) || 0) + 1);
+            });
+            if (exams.size === 0 || months.size === 0) {
+                el.innerHTML = '<p class="text-sm text-slate-400 py-8 text-center">모의고사 또는 등록월 정보가 없습니다.</p>';
+                return;
+            }
+            const monthArr = [...months].sort();
+            const examArr = [...exams];
+            const rowTotals = {};
+            examArr.forEach(e => {
+                rowTotals[e] = monthArr.reduce((s, m) => s + (cell.get(`${e}\x1e${m}`) || 0), 0);
+            });
+            examArr.sort((a, b) => (rowTotals[b] || 0) - (rowTotals[a] || 0));
+            let maxCell = 1;
+            examArr.forEach(e => {
+                monthArr.forEach(m => {
+                    const n = cell.get(`${e}\x1e${m}`) || 0;
+                    if (n > maxCell) maxCell = n;
+                });
+            });
+            let html = '<table class="min-w-full text-xs border-collapse"><thead><tr>';
+            html += '<th class="sticky left-0 z-20 bg-slate-100 border border-slate-200 px-2 py-2 text-left font-semibold text-slate-700 shadow-sm min-w-[140px]">모의고사</th>';
+            monthArr.forEach(m => {
+                html += `<th class="border border-slate-200 bg-slate-50 px-2 py-2 font-semibold text-slate-600 whitespace-nowrap">${escapeHtml(m)}</th>`;
+            });
+            html += '<th class="border border-slate-200 bg-slate-100 px-2 py-2 font-semibold text-slate-800 whitespace-nowrap">합계</th></tr></thead><tbody>';
+            examArr.forEach(e => {
+                html += '<tr>';
+                html += `<th class="sticky left-0 z-10 bg-white border border-slate-200 px-2 py-1.5 text-left font-medium text-slate-800 max-w-[280px] align-top"><span class="line-clamp-3 break-words" title="${escapeHtml(e)}">${escapeHtml(e)}</span></th>`;
+                let rsum = 0;
+                monthArr.forEach(m => {
+                    const n = cell.get(`${e}\x1e${m}`) || 0;
+                    rsum += n;
+                    const alpha = maxCell > 0 ? 0.14 + (n / maxCell) * 0.72 : 0.14;
+                    const bg = n === 0 ? '#f8fafc' : hexAlpha('#3b82f6', alpha);
+                    const cl = n === 0 ? 'text-slate-300' : 'text-slate-900 font-semibold';
+                    html += `<td class="border border-slate-200 text-center py-1.5 px-1 tabular-nums ${cl}" style="background-color:${bg}">${n ? n.toLocaleString() : '—'}</td>`;
+                });
+                html += `<td class="border border-slate-200 bg-slate-50 text-center font-bold text-slate-800 py-1.5 tabular-nums">${rsum.toLocaleString()}</td></tr>`;
+            });
+            html += '<tr><th class="sticky left-0 z-20 bg-slate-100 border border-slate-200 px-2 py-2 text-right font-semibold text-slate-700 shadow-sm">월 합계</th>';
+            monthArr.forEach(m => {
+                let csum = 0;
+                examArr.forEach(e => { csum += cell.get(`${e}\x1e${m}`) || 0; });
+                html += `<td class="border border-slate-200 bg-slate-100 text-center font-bold text-slate-800 py-2 tabular-nums">${csum.toLocaleString()}</td>`;
+            });
+            const grand = examArr.reduce((s, e) => s + (rowTotals[e] || 0), 0);
+            html += `<td class="border border-slate-200 bg-slate-200 text-center font-bold text-slate-900 py-2 tabular-nums">${grand.toLocaleString()}</td></tr>`;
+            html += '</tbody></table>';
+            el.innerHTML = html;
+        }
+
+        function renderCommentMockExamGrids(tabKey, data) {
+            const wrap = document.getElementById('comment-mock-month-grids');
+            if (!wrap) return;
+            if (tabKey !== 'comment') {
+                wrap.classList.add('hidden');
+                return;
+            }
+            wrap.classList.remove('hidden');
+            const ACADEMY = '모의고사(학원)';
+            const ONLINE = '모의고사(온라인)';
+            const academyRows = data.filter(d => String(d['구분'] || '').trim() === ACADEMY);
+            const onlineRows = data.filter(d => String(d['구분'] || '').trim() === ONLINE);
+            renderMockExamMonthHeatmap('comment-grid-academy-mount', academyRows, '이 기간·조건에 모의고사(학원) 데이터가 없습니다.');
+            renderMockExamMonthHeatmap('comment-grid-online-mount', onlineRows, '이 기간·조건에 모의고사(온라인) 데이터가 없습니다.');
+        }
+
         function needsProductNameForCharts(tabKey) {
-            return (tabKey === 'learning' || tabKey === 'product')
+            return (tabKey === 'learning' || tabKey === 'product' || tabKey === 'comment')
                 && Array.isArray(state.productNameSelection[tabKey])
                 && state.productNameSelection[tabKey].length === 0;
         }
@@ -2206,6 +2522,182 @@
             };
         }
 
+        function destroyCommentEmotionCharts() {
+            ['chartCommentEmotionDoughnut', 'chartCommentEmotionLine'].forEach(cid => {
+                if (state.charts[cid]) {
+                    state.charts[cid].destroy();
+                    delete state.charts[cid];
+                }
+            });
+        }
+
+        function setCommentEmotionSlotMessages(doughMsg, lineMsg) {
+            [['chartCommentEmotionDoughnut', 'chart-slot-msg-comment-emotion-doughnut'], ['chartCommentEmotionLine', 'chart-slot-msg-comment-emotion-line']].forEach(([cid, mid], idx) => {
+                const msg = idx === 0 ? doughMsg : lineMsg;
+                const canvas = document.getElementById(cid);
+                const box = document.getElementById(mid);
+                if (!box) return;
+                if (msg) {
+                    box.textContent = msg;
+                    box.classList.remove('hidden');
+                    if (canvas) canvas.classList.add('hidden');
+                } else {
+                    box.textContent = '';
+                    box.classList.add('hidden');
+                    if (canvas) canvas.classList.remove('hidden');
+                }
+            });
+        }
+
+        function renderCommentEmotionCharts(tabKey, data) {
+            const panel = document.getElementById('comment-emotion-panels');
+            if (!panel) return;
+            if (tabKey !== 'comment') {
+                panel.classList.add('hidden');
+                destroyCommentEmotionCharts();
+                setCommentEmotionSlotMessages(null, null);
+                return;
+            }
+            panel.classList.remove('hidden');
+            if (!data || data.length === 0) {
+                destroyCommentEmotionCharts();
+                setCommentEmotionSlotMessages('표시할 한줄평이 없습니다.', '표시할 한줄평이 없습니다.');
+                updateCommentEmotionFloat();
+                return;
+            }
+            setCommentEmotionSlotMessages(null, null);
+
+            const fs = document.getElementById('filter-start').value;
+            const fe = document.getElementById('filter-end').value;
+            const fromRange = buildMonthsInRangeInclusive(fs, fe);
+            const fromData = [...new Set(data.map(d => d._monthStr))].filter(Boolean).sort();
+            const finalMonths = fromRange.length
+                ? [...new Set([...fromRange, ...fromData])].sort()
+                : fromData;
+
+            const emCounts = {};
+            data.forEach(d => {
+                const e = d._emotionCategory || '미분류';
+                emCounts[e] = (emCounts[e] || 0) + 1;
+            });
+            const sortedEm = Object.entries(emCounts).sort((a, b) => b[1] - a[1]);
+            const doughnutLabels = sortedEm.map(x => x[0]);
+            const doughnutData = sortedEm.map(x => x[1]);
+            if (state.commentEmotionBrush.emotions && state.commentEmotionBrush.emotions.size) {
+                const allowed = new Set(doughnutLabels);
+                const next = new Set([...state.commentEmotionBrush.emotions].filter(e => allowed.has(e)));
+                state.commentEmotionBrush.emotions = next.size ? next : null;
+            }
+            if (state.commentEmotionBrush.months && state.commentEmotionBrush.months.size) {
+                const allowedM = new Set(finalMonths);
+                const nextM = new Set([...state.commentEmotionBrush.months].filter(m => allowedM.has(m)));
+                state.commentEmotionBrush.months = nextM.size ? nextM : null;
+            }
+            const doughnutColors = doughnutLabels.map((_, i) => THEME_COLORS[i % THEME_COLORS.length]);
+            const doughBg = doughnutBgForBrush(doughnutLabels, doughnutColors, state.commentEmotionBrush.emotions);
+
+            getChart('chartCommentEmotionDoughnut', {
+                type: 'doughnut',
+                data: {
+                    labels: doughnutLabels,
+                    datasets: [{ data: doughnutData, backgroundColor: doughBg, borderWidth: 0 }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '68%',
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                boxWidth: 10,
+                                generateLabels(chart) {
+                                    const d0 = chart.data.datasets[0];
+                                    const labels = chart.data.labels || [];
+                                    return labels.map((label, i) => {
+                                        const cnt = Number(d0.data[i]) || 0;
+                                        return {
+                                            text: `${label} (${cnt.toLocaleString()}건)`,
+                                            fillStyle: Array.isArray(d0.backgroundColor) ? d0.backgroundColor[i] : d0.backgroundColor,
+                                            hidden: false,
+                                            index: i
+                                        };
+                                    });
+                                }
+                            }
+                        }
+                    },
+                    onClick: (evt, els) => handleCommentEmotionDoughnutClick(evt, els, doughnutLabels)
+                }
+            });
+
+            const emOrder = doughnutLabels;
+            const byMonthEm = {};
+            finalMonths.forEach(m => {
+                byMonthEm[m] = {};
+                emOrder.forEach(e => { byMonthEm[m][e] = 0; });
+            });
+            data.forEach(d => {
+                const m = d._monthStr;
+                const e = d._emotionCategory || '미분류';
+                if (!byMonthEm[m]) byMonthEm[m] = {};
+                byMonthEm[m][e] = (byMonthEm[m][e] || 0) + 1;
+            });
+
+            const brushE = state.commentEmotionBrush.emotions;
+            const brushM = state.commentEmotionBrush.months;
+            const datasets = emOrder.map((emotion, i) => {
+                const base = THEME_COLORS[i % THEME_COLORS.length];
+                const orig = finalMonths.map(m => (byMonthEm[m] && byMonthEm[m][emotion] != null) ? byMonthEm[m][emotion] : 0);
+                const dimmed = brushE && brushE.size > 0 && !brushE.has(emotion);
+                const borderCol = dimmed ? hexAlpha(base, 0.35) : base;
+                return {
+                    label: emotion,
+                    data: orig,
+                    borderColor: borderCol,
+                    backgroundColor: hexAlpha(base, 0.08),
+                    tension: 0.35,
+                    fill: false,
+                    pointRadius: finalMonths.map(m => {
+                        if (!brushM || !brushE || brushM.size === 0 || brushE.size === 0) return 4;
+                        return (brushM.has(m) && brushE.has(emotion)) ? 7 : 3;
+                    }),
+                    pointHoverRadius: 6,
+                    borderWidth: dimmed ? 1 : 2
+                };
+            });
+
+            getChart('chartCommentEmotionLine', {
+                type: 'line',
+                data: { labels: finalMonths, datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'nearest', intersect: true },
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: { beginAtZero: true, ticks: { precision: 0 } }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } },
+                        tooltip: {
+                            callbacks: {
+                                label(ctx) {
+                                    const n = ctx.parsed.y;
+                                    const v = Number.isFinite(n) ? n : 0;
+                                    return `${ctx.dataset.label || ''}: ${v}건`;
+                                }
+                            }
+                        },
+                        zoom: { pan: { enabled: true, mode: 'x', threshold: 10 }, zoom: { wheel: { enabled: true }, pinch: { enabled: true }, mode: 'x' } }
+                    },
+                    onClick: (evt, els, ch) => handleCommentEmotionLineClick(evt, els, ch)
+                }
+            });
+
+            updateCommentEmotionFloat();
+        }
+
         /** message가 있으면 도넛·추이·소요시간 차트를 비우고 슬롯에 안내 문구 표시. null이면 캔버스만 다시 표시. */
         function setMainChartSlotsPlaceholder(message) {
             [['chartDoughnut', 'chart-slot-msg-doughnut'], ['chartTrend', 'chart-slot-msg-trend'], ['chartTimeBucket', 'chart-slot-msg-timebucket']].forEach(([cid]) => {
@@ -2214,6 +2706,9 @@
                     delete state.charts[cid];
                 }
             });
+            destroyCommentEmotionCharts();
+            const emoPanel = document.getElementById('comment-emotion-panels');
+            if (emoPanel) emoPanel.classList.add('hidden');
             [['chartDoughnut', 'chart-slot-msg-doughnut'], ['chartTrend', 'chart-slot-msg-trend'], ['chartTimeBucket', 'chart-slot-msg-timebucket']].forEach(([cid, mid]) => {
                 const canvas = document.getElementById(cid);
                 const box = document.getElementById(mid);
@@ -2236,6 +2731,18 @@
                 delete state.charts['chartForecast'];
             }
             const key = state.currentTab;
+            updateKpiRowForTab(key);
+            const doughTitle = document.getElementById('chart-doughnut-title');
+            const doughDesc = document.getElementById('chart-doughnut-desc');
+            if (doughTitle && doughDesc) {
+                if (key === 'comment') {
+                    doughTitle.textContent = '모의고사 비중';
+                    doughDesc.textContent = '기간 내 모의고사(문제지명)별 건수 비중입니다.';
+                } else {
+                    doughTitle.textContent = '유형 비중';
+                    doughDesc.textContent = '기간·상품 범위 내 유형 비중입니다.';
+                }
+            }
             const data = getViewDataset();
             state.filtered = data;
 
@@ -2246,7 +2753,9 @@
                 document.getElementById('kpi-top-type').textContent = '—';
                 document.getElementById('kpi-top-type-sub').textContent = '';
                 document.getElementById('delayed-table-body').innerHTML = '';
-                const emptyChartMsg = needsProductNameForCharts(key) ? MSG_CHART_NEED_PRODUCT : MSG_CHART_NO_DATA;
+                const emptyChartMsg = needsProductNameForCharts(key)
+                    ? (key === 'comment' ? MSG_CHART_NEED_COMMENT_MOCK : MSG_CHART_NEED_PRODUCT)
+                    : MSG_CHART_NO_DATA;
                 setMainChartSlotsPlaceholder(emptyChartMsg);
                 ['chartShippingTrend', 'chartProductKw'].forEach(cid => {
                     if (state.charts[cid]) {
@@ -2264,7 +2773,9 @@
                 document.getElementById('o11-shipping-panel').classList.add('hidden');
                 document.getElementById('product-extra-panel').classList.add('hidden');
                 document.getElementById('delayed-section').classList.add('hidden');
+                renderCommentMockExamGrids(key, data);
                 renderLearningPQPanel(key, data);
+                renderCommentEmotionCharts(key, key === 'comment' ? getCommentRowsWithMainChartFilter() : data);
                 updateFilteredDetailFloat();
                 return;
             }
@@ -2286,7 +2797,9 @@
             document.getElementById('kpi-avg-time').textContent = answeredData.length ? avgTime.toFixed(1) + '시간' : '—';
             document.getElementById('kpi-rate').textContent = total ? ((answeredCount / total) * 100).toFixed(1) + '%' : '—';
             document.getElementById('kpi-top-type').textContent = topCat[0];
-            document.getElementById('kpi-top-type-sub').textContent = total && topCat[1] ? `${((topCat[1] / total) * 100).toFixed(1)}% (유형 분포)` : '';
+            document.getElementById('kpi-top-type-sub').textContent = total && topCat[1]
+                ? `${((topCat[1] / total) * 100).toFixed(1)}% (${key === 'comment' ? '모의고사 비중' : '유형 분포'})`
+                : '';
 
             const doughnutLabels = fullSortedCats.map(x => x[0]);
             const doughnutData = fullSortedCats.map(x => x[1]);
@@ -2635,7 +3148,9 @@
                 });
             }
 
+            renderCommentMockExamGrids(key, data);
             renderLearningPQPanel(key, data);
+            renderCommentEmotionCharts(key, key === 'comment' ? getCommentRowsWithMainChartFilter() : data);
             updateFilteredDetailFloat();
         }
     </script>
